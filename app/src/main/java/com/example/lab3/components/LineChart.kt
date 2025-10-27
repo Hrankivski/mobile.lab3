@@ -38,7 +38,6 @@ fun LineChart(
         var minV = data.minOrNull() ?: 0.0
         var range = maxV - minV
 
-        // якщо значення майже однакові – збільшити діапазон
         if (range < 1e-3) {
             val avg = (maxV + minV) / 2
             maxV = avg * 1.1
@@ -46,17 +45,14 @@ fun LineChart(
             range = maxV - minV
         }
 
-        // Малюємо координатну сітку
         for (i in 0..4) {
             val y = padding + i * (h / 4)
             drawLine(gridColor, Offset(padding, y), Offset(padding + w, y), 1f)
         }
 
-        // Осі
         drawLine(axisColor, Offset(padding, padding), Offset(padding, padding + h), 2f)
         drawLine(axisColor, Offset(padding, padding + h), Offset(padding + w, padding + h), 2f)
 
-        // Підпис шкали Y
         val stepValue = range / 4
         for (i in 0..4) {
             val value = maxV - i * stepValue
@@ -74,14 +70,12 @@ fun LineChart(
             Offset(x, y)
         }
 
-        // Лінія
         val path = Path().apply {
             moveTo(points.first().x, points.first().y)
             for (p in points.drop(1)) lineTo(p.x, p.y)
         }
         drawPath(path, lineColor, style = Stroke(width = 3f))
 
-        // Точки + значення
         points.forEachIndexed { i, p ->
             drawCircle(color = lineColor, radius = 5f, center = p)
             drawContext.canvas.nativeCanvas.drawText(
@@ -92,7 +86,6 @@ fun LineChart(
             )
         }
 
-        // Підписи осей
         drawContext.canvas.nativeCanvas.drawText(labelX, padding + w / 2, size.height - 10f, textPaint)
         drawContext.canvas.nativeCanvas.drawText(labelY, 10f, padding + h / 2, textPaint)
     }

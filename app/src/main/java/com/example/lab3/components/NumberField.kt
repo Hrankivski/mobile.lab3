@@ -7,11 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
-/**
- * Простий компонент для вводу чисел.
- * Не використовує KeyboardOptions/KeyboardType щоб уникнути версійних проблем.
- * value — рядок, state тримає батьківський composable.
- */
 @Composable
 fun NumberField(
     label: String,
@@ -25,12 +20,10 @@ fun NumberField(
         OutlinedTextField(
             value = value,
             onValueChange = { raw ->
-                // Заміна коми на крапку, лишаємо цифри і максимум одну крапку
                 val cleaned = raw.replace(',', '.')
                     .filterIndexed { index, ch ->
                         ch.isDigit() || (ch == '.' && cleanedWouldAllowDot(raw, index))
                     }
-                // simplified approach: allow digits and dots but normalize multiple dots
                 val normalized = normalizeNumberString(cleaned)
                 onValueChange(normalized)
             },
@@ -46,9 +39,7 @@ fun NumberField(
     }
 }
 
-// Helpers (kept here to avoid top-level conflicts)
 private fun cleanedWouldAllowDot(raw: String, index: Int): Boolean {
-    // allow any dot; final normalization will remove extras
     return true
 }
 
@@ -56,7 +47,6 @@ private fun normalizeNumberString(s: String): String {
     if (s.isEmpty()) return s
     val parts = s.split('.')
     return if (parts.size <= 2) s else {
-        // join first, and concatenate the rest as decimals (remove extra dots)
         val first = parts.first()
         val decimals = parts.drop(1).joinToString("").take(8) // limit decimals length
         if (decimals.isEmpty()) first else "$first.$decimals"
