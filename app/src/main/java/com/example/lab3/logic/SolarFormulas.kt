@@ -17,6 +17,10 @@ object SolarFormulas {
         0.40  // Грудень
     )
 
+    val daysInMonth = listOf(
+        31, 28, 31, 30, 31, 30,
+        31, 31, 30, 31, 30, 31
+    )
     fun dailyEnergyKWh(
         panelCount: Double,
         powerPerPanel: Double,
@@ -32,8 +36,16 @@ object SolarFormulas {
     }
 
     fun yearlyEnergyKWh(dailyKWh: Double): Double {
-        return dailyKWh * 365
+        var totalEnergy = 0.0
+
+        for (i in 0 until 12) {
+            val monthlyEnergy = dailyKWh * defaultMonthlyFactors[i] * daysInMonth[i]
+            totalEnergy += monthlyEnergy
+        }
+
+        return totalEnergy
     }
+
 
     fun revenueUAH(yearlyKWh: Double, tariff: Double): Double {
         return yearlyKWh * tariff
